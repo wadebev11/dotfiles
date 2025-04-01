@@ -7,3 +7,11 @@ git config --global remote.origin.prune True
 git config --global core.editor "vim"
 
 echo "git configuration finished"
+
+cat >> ~/.bashrc << EOF
+
+# enable vim navigation of command line
+set -o vi
+EOF
+
+echo "~/.bashrc updated"

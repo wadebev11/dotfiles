@@ -15,3 +15,10 @@ set -o vi
 EOF
 
 echo "~/.bashrc updated"
+
+cat >> ~/.vimrc << EOF
+set hlsearch
+set number
+EOF
+
+echo "~/.vimrc updated"

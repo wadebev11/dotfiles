@@ -29,3 +29,7 @@ set number
 EOF
 
 echo "~/.vimrc updated"
+
+cat >> ~/.tmux.conf << EOF
+set -g mouse on
+EOF

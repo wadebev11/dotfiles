@@ -15,26 +15,38 @@ git config --global alias.origindiff "!git fetch; git diff origin/$(git branch-n
 
 echo "git configuration finished"
 
-cat >> ~/.bashrc << EOF
+write_block() {
+  file="$1"
+  comment_prefix="$2"
+  block="$(cat)"
+  begin_marker="$comment_prefix >>> dotfiles managed block >>>"
+  end_marker="$comment_prefix <<< dotfiles managed block <<<"
 
+  touch "$file"
+  sed -i "/$begin_marker/,/$end_marker/d" "$file"
+
+  {
+    printf '%s\n' "$begin_marker"
+    printf '%s\n' "$block"
+    printf '%s\n' "$end_marker"
+  } >> "$file"
+
+  echo "updated $file"
+}
+
+write_block ~/.bashrc '#' << 'EOF'
 # enable vim navigation of command line
 set -o vi
 EOF
 
-echo "~/.bashrc updated"
-
-cat >> ~/.vimrc << EOF
+write_block ~/.vimrc '"' << 'EOF'
 set hlsearch
 set number
 EOF
 
-echo "~/.vimrc updated"
-
-cat >> ~/.tmux.conf << EOF
+write_block ~/.tmux.conf '#' << 'EOF'
 set -g mouse on
 EOF
-
-echo "~/.tmux.conf updated"
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AIDEV="$DOTFILES/aidev"

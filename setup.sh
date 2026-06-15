@@ -33,3 +33,32 @@ echo "~/.vimrc updated"
 cat >> ~/.tmux.conf << EOF
 set -g mouse on
 EOF
+
+echo "~/.tmux.conf updated"
+
+DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+AIDEV="$DOTFILES/aidev"
+
+link() {
+  target="$1"
+  link_path="$2"
+
+  mkdir -p "$(dirname "$link_path")"
+
+  if [ -L "$link_path" ] && [ "$(readlink "$link_path")" = "$target" ]; then
+    echo "ok: $link_path -> $target"
+  else
+    if [ -e "$link_path" ] || [ -L "$link_path" ]; then
+      mv "$link_path" "$link_path.bak"
+      echo "backed up existing $link_path -> $link_path.bak"
+    fi
+    ln -sfn "$target" "$link_path"
+    echo "linked: $link_path -> $target"
+  fi
+}
+
+link "$AIDEV/AGENTS.md" ~/.claude/CLAUDE.md
+link "$AIDEV/skills" ~/.claude/skills
+link "$AIDEV/AGENTS.md" ~/.config/opencode/AGENTS.md
+
+echo "aidev symlinks finished"

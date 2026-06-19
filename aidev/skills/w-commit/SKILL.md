@@ -1,5 +1,5 @@
 ---
-name: commit
+name: w-commit
 description: Used when creating a git commit when committing working changes.
 ---
 

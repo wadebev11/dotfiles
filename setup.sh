@@ -10,8 +10,8 @@ git config --global user.email wadebev11@gmail.com
 
 git config --global alias.branch-name "!git rev-parse --abbrev-ref HEAD"
 git config --global alias.st "status"
-git config --global alias.originreset "!git fetch; git reset --hard origin/$(git branch-name)"
-git config --global alias.origindiff "!git fetch; git diff origin/$(git branch-name)"
+git config --global alias.originreset '!git fetch; git reset --hard origin/$(git branch-name)'
+git config --global alias.origindiff '!git fetch; git diff origin/$(git branch-name)'
 
 echo "git configuration finished"
 

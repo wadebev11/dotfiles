@@ -10,6 +10,7 @@ git config --global user.email wadebev11@gmail.com
 
 git config --global alias.branch-name "!git rev-parse --abbrev-ref HEAD"
 git config --global alias.st "status"
+git config --global alias.branch-rename '!f() { old=$(git branch-name); git branch -m "$1" && git push -u origin "$1":"$1" && git push origin :"$old"; }; f'
 git config --global alias.originreset '!git fetch; git reset --hard origin/$(git branch-name)'
 git config --global alias.origindiff '!git fetch; git diff origin/$(git branch-name)'
 

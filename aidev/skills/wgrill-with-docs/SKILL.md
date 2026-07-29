@@ -8,13 +8,23 @@ description:
 
 <what-to-do>
 
-Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch
-of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended
-answer.
+Interview me relentlessly about every aspect of this this plan until we reach a shared understanding. Walk down each branch of the design tree,
+resolving dependencies between decisions one-by-one.
 
-Ask the questions one at a time, waiting for feedback on each question before continuing.
+Only ask a question when the answer has to come out of my head: product intent, scope, priorities, risk appetite,
+naming/wording, ownership, or history. Never manufacture a question to keep the interview going — only bring up actual
+ambiguity.
 
-If a question can be answered by exploring the codebase, explore the codebase instead.
+Before asking anything, try to kill the question:
+
+- If the codebase, docs, or git history can answer it, go read them instead.
+- If a quick spike or run can answer it, run it instead.
+- If you have a recommendation and the alternatives are clearly worse, don't ask — state the decision and its one-line
+  rationale as an assumption.
+
+When you do ask: one question at a time, with your recommended answer, waiting for feedback before continuing. Never
+pad the options with an alternative you've already argued against in the question itself — if only one option is sane,
+it isn't a question.
 
 </what-to-do>
 
@@ -81,8 +91,8 @@ code cancels entire Orders, but you just said partial cancellation is possible �
 
 ### Update GLOSSARY.md inline
 
-When a term is resolved, update `GLOSSARY.md` right there. Don't batch these up — capture them as they happen. Use the
-format in [GLOSSARY-FORMAT.md](./GLOSSARY-FORMAT.md).
+When a term is resolved, update `GLOSSARY.md` right there — don't ask permission first. Don't batch these up — capture
+them as they happen. Use the format in [GLOSSARY-FORMAT.md](./GLOSSARY-FORMAT.md).
 
 `GLOSSARY.md` should be totally devoid of implementation details. Do not treat `GLOSSARY.md` as a spec, a scratch pad,
 or a repository for implementation decisions. It is a glossary and nothing else.

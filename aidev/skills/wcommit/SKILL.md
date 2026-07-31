@@ -1,6 +1,7 @@
 ---
 name: wcommit
 description: Used when creating a git commit when committing working changes.
+model: opus
 ---
 
 ## Size of commits

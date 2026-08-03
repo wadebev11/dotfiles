@@ -72,7 +72,16 @@ link() {
 }
 
 link "$AIDEV/AGENTS.md" ~/.claude/CLAUDE.md
-link "$AIDEV/skills" ~/.claude/skills
 link "$AIDEV/AGENTS.md" ~/.config/opencode/AGENTS.md
+
+if [ -L ~/.claude/skills ]; then
+  rm ~/.claude/skills
+  echo "removed old whole-directory symlink at ~/.claude/skills"
+fi
+mkdir -p ~/.claude/skills
+for skill_dir in "$AIDEV"/skills/*/; do
+  skill_name="$(basename "$skill_dir")"
+  link "$AIDEV/skills/$skill_name" ~/.claude/skills/"$skill_name"
+done
 
 echo "aidev symlinks finished"

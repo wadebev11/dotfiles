@@ -1,5 +1,5 @@
 ---
-name: wblindspotpass
+name: widentifyblindspots
 description:
   Used before implementing or debugging in unfamiliar territory. Surfaces the unknowns the developer doesn't know to ask
   about, backed by evidence from the code. Analysis only, makes no edits.

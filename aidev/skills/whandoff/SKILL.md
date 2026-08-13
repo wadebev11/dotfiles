@@ -18,7 +18,13 @@ Do not answer the question, solve it, or implement anything. The output is the p
 
 1. **Identify the target.** Use the argument if given
 2. **Re-verify, don't just recall.** Before writing anything down, confirm every file path, line number, and claim
-   against the actual codebase (Read/Grep) — conversation memory of "line 243" may already be stale.
+   against the actual codebase — conversation memory of "line 243" may already be stale. Direct Read/Grep is the
+   default. If confirming something spans enough files that it would bloat this conversation, delegate it to a
+   **foreground** Agent call (`run_in_background: false`) instead — that keeps the main context clean and still
+   finishes before the prompt gets written. Never use a background agent: it returns a task ID and notifies later,
+   which means waiting/polling for it or writing the prompt before verification lands — neither is compatible with
+   this being fast. Any delegated verification must stay fact-gathering only (confirm file:line, mechanism, prior
+   art) — it must never propose a solution or approach. That's `wpickup`'s job.
 3. **Write the handoff prompt**, containing:
    - The problem or question, restated so it stands alone — no "as I mentioned," no pronouns without antecedents.
    - The relevant context this conversation already dug up: exact `file:line` references, the mechanism involved,
@@ -32,6 +38,8 @@ Do not answer the question, solve it, or implement anything. The output is the p
 - Don't answer the question or propose a solution — that's for the pickup conversation, not this one.
 - Don't pad it with irrelevant history from earlier in the conversation — only what's needed to act on the ask.
 - Don't invent unresolved decisions just to sound thorough — leave genuinely open questions open.
+- Don't spawn a **background** agent to verify or research anything — foreground only, so the result is in hand
+  before the prompt is written.
 
 ## Output
 

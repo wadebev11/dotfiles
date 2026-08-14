@@ -91,8 +91,12 @@ code cancels entire Orders, but you just said partial cancellation is possible �
 
 ### Update GLOSSARY.md inline
 
-When a term is resolved, update `GLOSSARY.md` right there — don't ask permission first. Don't batch these up — capture
-them as they happen. Use the format in [GLOSSARY-FORMAT.md](./GLOSSARY-FORMAT.md).
+When a term is resolved in conversation with the developer, update `GLOSSARY.md` right there — don't ask permission
+first. Don't batch these up — capture them as they happen. Use the format in [GLOSSARY-FORMAT.md](./GLOSSARY-FORMAT.md).
+
+Only record terms the developer has used, confirmed, or agreed to in the dialogue. Vocabulary you lifted from the code
+is not resolved language — surface it as a question first ("the code calls this X — is that the word you use?") and let
+the answer decide the entry.
 
 `GLOSSARY.md` should be totally devoid of implementation details. Do not treat `GLOSSARY.md` as a spec, a scratch pad,
 or a repository for implementation decisions. It is a glossary and nothing else.

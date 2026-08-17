@@ -92,4 +92,7 @@ Each finding contains:
 
 A single prioritized list of findings, sorted by impact × effort, cheap high-impact wins first. If the scope is clean, say so rather than manufacturing findings.
 
+**Output format: plain text in the conversation, not an artifact.** Print the findings directly as markdown text in the 
+assistant's response. Do not create a Claude Artifact, do not write to an HTML file, do not use the Artifact tool.
+
 Do not invent attributions.

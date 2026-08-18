@@ -13,7 +13,7 @@ git config --global alias.st "status"
 git config --global alias.branch-rename '!f() { old=$(git branch-name); git branch -m "$1" && git push -u origin "$1":"$1" && git push origin :"$old"; }; f'
 git config --global alias.originreset '!git fetch; git reset --hard origin/$(git branch-name)'
 git config --global alias.origindiff '!git fetch; git diff origin/$(git branch-name)'
-git config --global alias.local-prune '!git branch -v | grep "\[gone\]" | awk '\''{print $1}'\'' | xargs -r git branch -D'
+git config --global alias.localprune '!git branch -v | grep "\[gone\]" | awk '\''{print $1}'\'' | xargs -r git branch -D'
 
 echo "git configuration finished"
 

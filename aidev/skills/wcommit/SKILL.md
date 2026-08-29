@@ -33,3 +33,6 @@ Follow the 50/72 rule for line lengths in the commit message. 50 for the subject
 ## Notes
 
 - **DO NOT** add a co authored by line
+- **DO NOT** mention transient artifacts like an agent's plan. The commit message and the diff in the commit should be self
+  contained so that understanding doesn't depend on a plan that has since been deleted
+

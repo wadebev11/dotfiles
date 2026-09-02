@@ -6,6 +6,11 @@ Be clear but concise in your answers. Less is more. If you don't know something,
 
 Don't push or merge work unless explicitly told to
 
+# Communicating on my behalf
+
+Never comment, reply, or post on my behalf on any user-facing platform (GitHub PRs/issues, Slack, Jira, email, etc.)
+unless I explicitly ask you to
+
 # Code Style
 
 - Don't add preemptive returns for logic control flow. Instead use positive if statements. Multiple returns in a

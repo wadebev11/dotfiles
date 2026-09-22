@@ -44,6 +44,7 @@ EOF
 write_block ~/.vimrc '"' << 'EOF'
 set hlsearch
 set number
+set display=lastline
 EOF
 
 write_block ~/.tmux.conf '#' << 'EOF'

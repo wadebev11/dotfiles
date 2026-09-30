@@ -39,6 +39,7 @@ write_block() {
 write_block ~/.bashrc '#' << 'EOF'
 # enable vim navigation of command line
 set -o vi
+alias xit=exit
 EOF
 
 write_block ~/.vimrc '"' << 'EOF'

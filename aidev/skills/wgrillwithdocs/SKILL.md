@@ -1,5 +1,5 @@
 ---
-name: wgrill-with-docs
+name: wgrillwithdocs
 description:
   Grilling session that challenges your plan against the existing domain model, sharpens terminology, and updates
   documentation (GLOSSARY.md, ADRs) inline as decisions crystallise. Use when user wants to stress-test a plan against

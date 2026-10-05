@@ -1,5 +1,5 @@
 ---
-name: wcode-review
+name: wcodereview
 description: Used when reviewing working changes or a pull request for correctness and quality.
 argument-hint: optional instructions on what to review (e.g. a base branch, specific commits, or files)
 ---

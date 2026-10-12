@@ -11,6 +11,7 @@ write_block() {
 
   touch "$file"
   updated_file="$(mktemp)"
+  awk_status=0
   FILE="$file" MANAGED_BLOCK="$managed_block" BEGIN_MARKER="$begin_marker" END_MARKER="$end_marker" awk '
     { line = $0; sub(/[ \t\r]+$/, "", line) }
     line == ENVIRON["BEGIN_MARKER"] { begin_count++; begin_line = NR; print ENVIRON["MANAGED_BLOCK"]; inside_block = 1; next }
@@ -27,11 +28,14 @@ write_block() {
       }
       if (begin_count == 0) print ENVIRON["MANAGED_BLOCK"]
     }
-  ' "$file" > "$updated_file"
-  cat "$updated_file" > "$file"
-  rm "$updated_file"
+  ' "$file" > "$updated_file" || awk_status=$?
 
-  echo "updated $file"
+  if [ "$awk_status" -eq 0 ]; then
+    cat "$updated_file" > "$file"
+    echo "updated $file"
+  fi
+  rm "$updated_file"
+  return "$awk_status"
 }
 
 link() {

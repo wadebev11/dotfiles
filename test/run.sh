@@ -27,32 +27,32 @@ assert_contains() {
   fi
 }
 
-BEGIN='# >>> dotfiles managed block >>>'
-END='# <<< dotfiles managed block <<<'
+DOTFILES_BEGIN='# >>> dotfiles managed block >>>'
+DOTFILES_END='# <<< dotfiles managed block <<<'
 
 test_write_block_creates_missing_file_with_block() {
   echo 'set -o vi' | write_block "$HOME/.bashrc" '#' > /dev/null
-  assert_eq "$(cat "$HOME/.bashrc")" "$BEGIN
+  assert_eq "$(cat "$HOME/.bashrc")" "$DOTFILES_BEGIN
 set -o vi
-$END" "new file contains only the managed block"
+$DOTFILES_END" "new file contains only the managed block"
 }
 
 test_write_block_appends_block_to_existing_content() {
   printf 'existing line\n' > "$HOME/.bashrc"
   echo 'set -o vi' | write_block "$HOME/.bashrc" '#' > /dev/null
   assert_eq "$(cat "$HOME/.bashrc")" "existing line
-$BEGIN
+$DOTFILES_BEGIN
 set -o vi
-$END" "block is appended after user content"
+$DOTFILES_END" "block is appended after user content"
 }
 
 test_write_block_replaces_block_in_place() {
-  printf 'before\n%s\nold\n%s\nafter\n' "$BEGIN" "$END" > "$HOME/.bashrc"
+  printf 'before\n%s\nold\n%s\nafter\n' "$DOTFILES_BEGIN" "$DOTFILES_END" > "$HOME/.bashrc"
   echo 'new' | write_block "$HOME/.bashrc" '#' > /dev/null
   assert_eq "$(cat "$HOME/.bashrc")" "before
-$BEGIN
+$DOTFILES_BEGIN
 new
-$END
+$DOTFILES_END
 after" "surrounding user content is preserved"
 }
 
@@ -69,15 +69,15 @@ test_write_block_uses_given_comment_prefix() {
 }
 
 test_write_block_matches_markers_with_trailing_whitespace() {
-  printf '%s  \nold\n%s\t\n' "$BEGIN" "$END" > "$HOME/.bashrc"
+  printf '%s  \nold\n%s\t\n' "$DOTFILES_BEGIN" "$DOTFILES_END" > "$HOME/.bashrc"
   echo 'new' | write_block "$HOME/.bashrc" '#' > /dev/null
-  assert_eq "$(cat "$HOME/.bashrc")" "$BEGIN
+  assert_eq "$(cat "$HOME/.bashrc")" "$DOTFILES_BEGIN
 new
-$END" "markers with trailing whitespace are still replaced"
+$DOTFILES_END" "markers with trailing whitespace are still replaced"
 }
 
 test_write_block_refuses_duplicate_begin_markers() {
-  printf '%s\n%s\n%s\n' "$BEGIN" "$BEGIN" "$END" > "$HOME/.bashrc"
+  printf '%s\n%s\n%s\n' "$DOTFILES_BEGIN" "$DOTFILES_BEGIN" "$DOTFILES_END" > "$HOME/.bashrc"
   original="$(cat "$HOME/.bashrc")"
   status=0
   output="$(echo 'new' | write_block "$HOME/.bashrc" '#' 2>&1)" || status=$?
@@ -87,7 +87,7 @@ test_write_block_refuses_duplicate_begin_markers() {
 }
 
 test_write_block_refuses_missing_end_marker() {
-  printf '%s\nold\n' "$BEGIN" > "$HOME/.bashrc"
+  printf '%s\nold\n' "$DOTFILES_BEGIN" > "$HOME/.bashrc"
   original="$(cat "$HOME/.bashrc")"
   status=0
   output="$(echo 'new' | write_block "$HOME/.bashrc" '#' 2>&1)" || status=$?
@@ -97,7 +97,7 @@ test_write_block_refuses_missing_end_marker() {
 }
 
 test_write_block_refuses_end_marker_before_begin_marker() {
-  printf '%s\nold\n%s\n' "$END" "$BEGIN" > "$HOME/.bashrc"
+  printf '%s\nold\n%s\n' "$DOTFILES_END" "$DOTFILES_BEGIN" > "$HOME/.bashrc"
   original="$(cat "$HOME/.bashrc")"
   status=0
   output="$(echo 'new' | write_block "$HOME/.bashrc" '#' 2>&1)" || status=$?

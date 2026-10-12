@@ -27,7 +27,20 @@ write_block() {
   managed_block="$(printf '%s\n%s\n%s' "$begin_marker" "$block" "$end_marker")"
 
   touch "$file"
-  if grep -qxF "$begin_marker" "$file"; then
+  begin_lines="$(grep -nxF "$begin_marker" "$file" | cut -d: -f1)"
+  end_lines="$(grep -nxF "$end_marker" "$file" | cut -d: -f1)"
+  begin_count="$(printf '%s' "$begin_lines" | grep -c .)" || true
+  end_count="$(printf '%s' "$end_lines" | grep -c .)" || true
+  if [ "$begin_count" != "$end_count" ] || [ "$begin_count" -gt 1 ]; then
+    echo "error: $file has a corrupt managed block ($begin_count begin markers, $end_count end markers); repair it by hand and re-run" >&2
+    exit 1
+  fi
+  if [ "$begin_count" -eq 1 ] && [ "$end_lines" -lt "$begin_lines" ]; then
+    echo "error: $file has a corrupt managed block (end marker on line $end_lines comes before begin marker on line $begin_lines); repair it by hand and re-run" >&2
+    exit 1
+  fi
+
+  if [ "$begin_count" -eq 1 ]; then
     replaced="$(MANAGED_BLOCK="$managed_block" BEGIN_MARKER="$begin_marker" END_MARKER="$end_marker" awk '
       $0 == ENVIRON["BEGIN_MARKER"] { print ENVIRON["MANAGED_BLOCK"]; inside_block = 1 }
       $0 == ENVIRON["END_MARKER"] && inside_block { inside_block = 0; next }

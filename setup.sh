@@ -19,6 +19,8 @@ git config --global alias.originreset '!git fetch; git reset --hard origin/$(git
 git config --global alias.origindiff '!git fetch; git diff origin/$(git branch-name)'
 git config --global alias.localprune '!git branch -v | grep "\[gone\]" | awk '\''{print $1}'\'' | xargs -r git branch -D'
 
+git -C "$DOTFILES" config core.hooksPath hooks
+
 echo "git configuration finished"
 
 write_block ~/.bashrc '#' << 'EOF'

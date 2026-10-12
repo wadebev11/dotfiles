@@ -7,9 +7,7 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib.sh"
 assert_eq() {
   actual="$1"
   expected="$2"
-  message="$3"
   if [ "$actual" != "$expected" ]; then
-    echo "  assertion failed: $message"
     diff <(echo "$expected") <(echo "$actual") | sed 's/^/    /'
     return 1
   fi
@@ -18,9 +16,7 @@ assert_eq() {
 assert_contains() {
   haystack="$1"
   needle="$2"
-  message="$3"
   if [[ "$haystack" != *"$needle"* ]]; then
-    echo "  assertion failed: $message"
     echo "    expected to contain: $needle"
     echo "    actual: $haystack"
     return 1
@@ -34,7 +30,7 @@ test_write_block_creates_missing_file_with_block() {
   echo 'set -o vi' | write_block "$HOME/.bashrc" '#' > /dev/null
   assert_eq "$(cat "$HOME/.bashrc")" "$DOTFILES_BEGIN
 set -o vi
-$DOTFILES_END" "new file contains only the managed block"
+$DOTFILES_END"
 }
 
 test_write_block_appends_block_to_existing_content() {
@@ -43,7 +39,7 @@ test_write_block_appends_block_to_existing_content() {
   assert_eq "$(cat "$HOME/.bashrc")" "existing line
 $DOTFILES_BEGIN
 set -o vi
-$DOTFILES_END" "block is appended after user content"
+$DOTFILES_END"
 }
 
 test_write_block_replaces_block_in_place() {
@@ -53,19 +49,19 @@ test_write_block_replaces_block_in_place() {
 $DOTFILES_BEGIN
 new
 $DOTFILES_END
-after" "surrounding user content is preserved"
+after"
 }
 
 test_write_block_is_idempotent() {
   echo 'set -o vi' | write_block "$HOME/.bashrc" '#' > /dev/null
   first="$(cat "$HOME/.bashrc")"
   echo 'set -o vi' | write_block "$HOME/.bashrc" '#' > /dev/null
-  assert_eq "$(cat "$HOME/.bashrc")" "$first" "running twice does not change the file"
+  assert_eq "$(cat "$HOME/.bashrc")" "$first"
 }
 
 test_write_block_uses_given_comment_prefix() {
   echo 'set number' | write_block "$HOME/.vimrc" '"' > /dev/null
-  assert_eq "$(head -1 "$HOME/.vimrc")" '" >>> dotfiles managed block >>>' "vimrc begin marker uses a double quote"
+  assert_eq "$(head -1 "$HOME/.vimrc")" '" >>> dotfiles managed block >>>'
 }
 
 test_write_block_matches_markers_with_trailing_whitespace() {
@@ -73,7 +69,7 @@ test_write_block_matches_markers_with_trailing_whitespace() {
   echo 'new' | write_block "$HOME/.bashrc" '#' > /dev/null
   assert_eq "$(cat "$HOME/.bashrc")" "$DOTFILES_BEGIN
 new
-$DOTFILES_END" "markers with trailing whitespace are still replaced"
+$DOTFILES_END"
 }
 
 test_write_block_refuses_duplicate_begin_markers() {
@@ -81,9 +77,9 @@ test_write_block_refuses_duplicate_begin_markers() {
   original="$(cat "$HOME/.bashrc")"
   status=0
   output="$(echo 'new' | write_block "$HOME/.bashrc" '#' 2>&1)" || status=$?
-  assert_eq "$status" 1 "exit status is 1"
-  assert_contains "$output" "corrupt managed block (2 begin markers, 1 end markers)" "error names the marker counts"
-  assert_eq "$(cat "$HOME/.bashrc")" "$original" "file is left untouched"
+  assert_eq "$status" 1
+  assert_contains "$output" "corrupt managed block (2 begin markers, 1 end markers)"
+  assert_eq "$(cat "$HOME/.bashrc")" "$original"
 }
 
 test_write_block_refuses_missing_end_marker() {
@@ -91,9 +87,9 @@ test_write_block_refuses_missing_end_marker() {
   original="$(cat "$HOME/.bashrc")"
   status=0
   output="$(echo 'new' | write_block "$HOME/.bashrc" '#' 2>&1)" || status=$?
-  assert_eq "$status" 1 "exit status is 1"
-  assert_contains "$output" "corrupt managed block (1 begin markers, 0 end markers)" "error names the marker counts"
-  assert_eq "$(cat "$HOME/.bashrc")" "$original" "file is left untouched"
+  assert_eq "$status" 1
+  assert_contains "$output" "corrupt managed block (1 begin markers, 0 end markers)"
+  assert_eq "$(cat "$HOME/.bashrc")" "$original"
 }
 
 test_write_block_refuses_end_marker_before_begin_marker() {
@@ -101,39 +97,39 @@ test_write_block_refuses_end_marker_before_begin_marker() {
   original="$(cat "$HOME/.bashrc")"
   status=0
   output="$(echo 'new' | write_block "$HOME/.bashrc" '#' 2>&1)" || status=$?
-  assert_eq "$status" 1 "exit status is 1"
-  assert_contains "$output" "end marker on line 1 comes before begin marker on line 3" "error names the line numbers"
-  assert_eq "$(cat "$HOME/.bashrc")" "$original" "file is left untouched"
+  assert_eq "$status" 1
+  assert_contains "$output" "end marker on line 1 comes before begin marker on line 3"
+  assert_eq "$(cat "$HOME/.bashrc")" "$original"
 }
 
 test_link_dotfile_creates_symlink_and_parent_directory() {
   touch "$HOME/target"
   link_dotfile "$HOME/target" "$HOME/.config/nested/link" > /dev/null
-  assert_eq "$(readlink "$HOME/.config/nested/link")" "$HOME/target" "symlink points at target"
+  assert_eq "$(readlink "$HOME/.config/nested/link")" "$HOME/target"
 }
 
 test_link_dotfile_leaves_correct_symlink_alone() {
   touch "$HOME/target"
   ln -s "$HOME/target" "$HOME/link"
   output="$(link_dotfile "$HOME/target" "$HOME/link")"
-  assert_eq "$output" "ok: $HOME/link -> $HOME/target" "reports the link as already correct"
-  [ ! -e "$HOME/link.bak" ] || { echo "  assertion failed: no backup should be created"; return 1; }
+  assert_eq "$output" "ok: $HOME/link -> $HOME/target"
+  [ ! -e "$HOME/link.bak" ]
 }
 
 test_link_dotfile_backs_up_existing_regular_file() {
   touch "$HOME/target"
   echo 'user content' > "$HOME/link"
   link_dotfile "$HOME/target" "$HOME/link" > /dev/null
-  assert_eq "$(readlink "$HOME/link")" "$HOME/target" "symlink replaces the file"
-  assert_eq "$(cat "$HOME/link.bak")" "user content" "original file is kept as .bak"
+  assert_eq "$(readlink "$HOME/link")" "$HOME/target"
+  assert_eq "$(cat "$HOME/link.bak")" "user content"
 }
 
 test_link_dotfile_replaces_symlink_pointing_elsewhere() {
   touch "$HOME/target" "$HOME/other"
   ln -s "$HOME/other" "$HOME/link"
   link_dotfile "$HOME/target" "$HOME/link" > /dev/null
-  assert_eq "$(readlink "$HOME/link")" "$HOME/target" "symlink now points at target"
-  assert_eq "$(readlink "$HOME/link.bak")" "$HOME/other" "old symlink is kept as .bak"
+  assert_eq "$(readlink "$HOME/link")" "$HOME/target"
+  assert_eq "$(readlink "$HOME/link.bak")" "$HOME/other"
 }
 
 failures=0

@@ -1,6 +1,10 @@
 #!/bin/bash
 
-set -e
-
 cd "$(git rev-parse --show-toplevel)"
-./test/run.sh
+
+if output="$(./test/run.sh 2>&1)"; then
+  printf '\033[32mTests passed\033[0m\n'
+else
+  echo "$output"
+  exit 1
+fi

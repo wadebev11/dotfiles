@@ -11,4 +11,4 @@ The region of an rc file that `setup.sh` owns, fenced by a begin marker and an e
 The comment lines that fence a managed block. "Opening" and "closing" are used interchangeably with begin and end.
 
 **Corrupt managed block**:
-A file whose begin and end markers are not either absent entirely or present exactly once with the begin marker first. `setup.sh` refuses to touch such a file and leaves repair to the user.
+A managed block whose markers are unpaired, duplicated, or in the wrong order. `setup.sh` refuses to touch the file and leaves repair to the user.

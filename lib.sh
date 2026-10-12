@@ -38,7 +38,7 @@ write_block() {
   return "$awk_status"
 }
 
-link() {
+link_dotfile() {
   target="$1"
   link_path="$2"
 

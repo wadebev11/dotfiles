@@ -39,8 +39,8 @@ write_block ~/.tmux.conf '#' << 'EOF'
 set -g mouse on
 EOF
 
-link "$AIDEV/AGENTS.md" ~/.claude/CLAUDE.md
-link "$AIDEV/AGENTS.md" ~/.config/opencode/AGENTS.md
+link_dotfile "$AIDEV/AGENTS.md" ~/.claude/CLAUDE.md
+link_dotfile "$AIDEV/AGENTS.md" ~/.config/opencode/AGENTS.md
 
 if [ -L ~/.claude/skills ]; then
   rm ~/.claude/skills
@@ -49,7 +49,7 @@ fi
 mkdir -p ~/.claude/skills
 for skill_dir in "$AIDEV"/skills/*/; do
   skill_name="$(basename "$skill_dir")"
-  link "$AIDEV/skills/$skill_name" ~/.claude/skills/"$skill_name"
+  link_dotfile "$AIDEV/skills/$skill_name" ~/.claude/skills/"$skill_name"
 done
 
 echo "aidev symlinks finished"

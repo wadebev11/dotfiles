@@ -106,32 +106,32 @@ test_write_block_refuses_end_marker_before_begin_marker() {
   assert_eq "$(cat "$HOME/.bashrc")" "$original" "file is left untouched"
 }
 
-test_link_creates_symlink_and_parent_directory() {
+test_link_dotfile_creates_symlink_and_parent_directory() {
   touch "$HOME/target"
-  link "$HOME/target" "$HOME/.config/nested/link" > /dev/null
+  link_dotfile "$HOME/target" "$HOME/.config/nested/link" > /dev/null
   assert_eq "$(readlink "$HOME/.config/nested/link")" "$HOME/target" "symlink points at target"
 }
 
-test_link_leaves_correct_symlink_alone() {
+test_link_dotfile_leaves_correct_symlink_alone() {
   touch "$HOME/target"
   ln -s "$HOME/target" "$HOME/link"
-  output="$(link "$HOME/target" "$HOME/link")"
+  output="$(link_dotfile "$HOME/target" "$HOME/link")"
   assert_eq "$output" "ok: $HOME/link -> $HOME/target" "reports the link as already correct"
   [ ! -e "$HOME/link.bak" ] || { echo "  assertion failed: no backup should be created"; return 1; }
 }
 
-test_link_backs_up_existing_regular_file() {
+test_link_dotfile_backs_up_existing_regular_file() {
   touch "$HOME/target"
   echo 'user content' > "$HOME/link"
-  link "$HOME/target" "$HOME/link" > /dev/null
+  link_dotfile "$HOME/target" "$HOME/link" > /dev/null
   assert_eq "$(readlink "$HOME/link")" "$HOME/target" "symlink replaces the file"
   assert_eq "$(cat "$HOME/link.bak")" "user content" "original file is kept as .bak"
 }
 
-test_link_replaces_symlink_pointing_elsewhere() {
+test_link_dotfile_replaces_symlink_pointing_elsewhere() {
   touch "$HOME/target" "$HOME/other"
   ln -s "$HOME/other" "$HOME/link"
-  link "$HOME/target" "$HOME/link" > /dev/null
+  link_dotfile "$HOME/target" "$HOME/link" > /dev/null
   assert_eq "$(readlink "$HOME/link")" "$HOME/target" "symlink now points at target"
   assert_eq "$(readlink "$HOME/link.bak")" "$HOME/other" "old symlink is kept as .bak"
 }

@@ -24,14 +24,19 @@ write_block() {
   begin_marker="$comment_prefix >>> dotfiles managed block >>>"
   end_marker="$comment_prefix <<< dotfiles managed block <<<"
 
-  touch "$file"
-  sed -i "/$begin_marker/,/$end_marker/d" "$file"
+  managed_block="$(printf '%s\n%s\n%s' "$begin_marker" "$block" "$end_marker")"
 
-  {
-    printf '%s\n' "$begin_marker"
-    printf '%s\n' "$block"
-    printf '%s\n' "$end_marker"
-  } >> "$file"
+  touch "$file"
+  if grep -qxF "$begin_marker" "$file"; then
+    replaced="$(MANAGED_BLOCK="$managed_block" BEGIN_MARKER="$begin_marker" END_MARKER="$end_marker" awk '
+      $0 == ENVIRON["BEGIN_MARKER"] { print ENVIRON["MANAGED_BLOCK"]; inside_block = 1 }
+      $0 == ENVIRON["END_MARKER"] && inside_block { inside_block = 0; next }
+      !inside_block { print }
+    ' "$file")"
+    printf '%s\n' "$replaced" > "$file"
+  else
+    printf '%s\n' "$managed_block" >> "$file"
+  fi
 
   echo "updated $file"
 }

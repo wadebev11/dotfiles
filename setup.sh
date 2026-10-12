@@ -27,29 +27,26 @@ write_block() {
   managed_block="$(printf '%s\n%s\n%s' "$begin_marker" "$block" "$end_marker")"
 
   touch "$file"
-  begin_lines="$(grep -nxF "$begin_marker" "$file" | cut -d: -f1)"
-  end_lines="$(grep -nxF "$end_marker" "$file" | cut -d: -f1)"
-  begin_count="$(printf '%s' "$begin_lines" | grep -c .)" || true
-  end_count="$(printf '%s' "$end_lines" | grep -c .)" || true
-  if [ "$begin_count" != "$end_count" ] || [ "$begin_count" -gt 1 ]; then
-    echo "error: $file has a corrupt managed block ($begin_count begin markers, $end_count end markers); repair it by hand and re-run" >&2
-    exit 1
-  fi
-  if [ "$begin_count" -eq 1 ] && [ "$end_lines" -lt "$begin_lines" ]; then
-    echo "error: $file has a corrupt managed block (end marker on line $end_lines comes before begin marker on line $begin_lines); repair it by hand and re-run" >&2
-    exit 1
-  fi
-
-  if [ "$begin_count" -eq 1 ]; then
-    replaced="$(MANAGED_BLOCK="$managed_block" BEGIN_MARKER="$begin_marker" END_MARKER="$end_marker" awk '
-      $0 == ENVIRON["BEGIN_MARKER"] { print ENVIRON["MANAGED_BLOCK"]; inside_block = 1 }
-      $0 == ENVIRON["END_MARKER"] && inside_block { inside_block = 0; next }
-      !inside_block { print }
-    ' "$file")"
-    printf '%s\n' "$replaced" > "$file"
-  else
-    printf '%s\n' "$managed_block" >> "$file"
-  fi
+  updated_file="$(mktemp)"
+  FILE="$file" MANAGED_BLOCK="$managed_block" BEGIN_MARKER="$begin_marker" END_MARKER="$end_marker" awk '
+    { line = $0; sub(/[ \t\r]+$/, "", line) }
+    line == ENVIRON["BEGIN_MARKER"] { begin_count++; begin_line = NR; print ENVIRON["MANAGED_BLOCK"]; inside_block = 1; next }
+    line == ENVIRON["END_MARKER"] { end_count++; end_line = NR; inside_block = 0; next }
+    !inside_block { print }
+    END {
+      if (begin_count != end_count || begin_count > 1) {
+        printf "error: %s has a corrupt managed block (%d begin markers, %d end markers); repair it by hand and re-run\n", ENVIRON["FILE"], begin_count, end_count > "/dev/stderr"
+        exit 1
+      }
+      if (begin_count == 1 && end_line < begin_line) {
+        printf "error: %s has a corrupt managed block (end marker on line %d comes before begin marker on line %d); repair it by hand and re-run\n", ENVIRON["FILE"], end_line, begin_line > "/dev/stderr"
+        exit 1
+      }
+      if (begin_count == 0) print ENVIRON["MANAGED_BLOCK"]
+    }
+  ' "$file" > "$updated_file" || { rm "$updated_file"; exit 1; }
+  cat "$updated_file" > "$file"
+  rm "$updated_file"
 
   echo "updated $file"
 }

@@ -9,6 +9,7 @@ write_block() {
 
   managed_block="$(printf '%s\n%s\n%s' "$begin_marker" "$block" "$end_marker")"
 
+  mkdir -p "$(dirname "$file")"
   touch "$file"
   updated_file="$(mktemp)"
   awk_status=0

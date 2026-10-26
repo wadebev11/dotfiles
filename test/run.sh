@@ -33,6 +33,13 @@ set -o vi
 $DOTFILES_END"
 }
 
+test_write_block_creates_missing_parent_directory() {
+  echo 'GLOSSARY.md' | write_block "$HOME/.config/git/ignore" '#' > /dev/null
+  assert_eq "$(cat "$HOME/.config/git/ignore")" "$DOTFILES_BEGIN
+GLOSSARY.md
+$DOTFILES_END"
+}
+
 test_write_block_appends_block_to_existing_content() {
   printf 'existing line\n' > "$HOME/.bashrc"
   echo 'set -o vi' | write_block "$HOME/.bashrc" '#' > /dev/null

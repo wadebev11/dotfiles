@@ -22,6 +22,12 @@ git config --global alias.localprune '!git branch -v | grep "\[gone\]" | awk '\'
 # set up git hooks for this dotfiles repo
 git -C "$DOTFILES" config core.hooksPath hooks
 
+write_block ~/.config/git/ignore '#' << 'EOF'
+**/.claude/settings.local.json
+GLOSSARY.md
+GLOSSARY-MAP.md
+EOF
+
 echo "git configuration finished"
 
 write_block ~/.bashrc '#' << 'EOF'

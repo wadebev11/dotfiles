@@ -2,7 +2,15 @@
 
 set -u
 
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib.sh"
+DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$DOTFILES/lib.sh"
+
+for git_config_override in GIT_CONFIG_GLOBAL XDG_CONFIG_HOME; do
+  if [ -n "${!git_config_override:-}" ]; then
+    echo "error: $git_config_override is set, so git would write global config outside the throwaway HOME; unset it and re-run" >&2
+    exit 1
+  fi
+done
 
 assert_eq() {
   actual="$1"
@@ -137,6 +145,16 @@ test_link_dotfile_replaces_symlink_pointing_elsewhere() {
   link_dotfile "$HOME/target" "$HOME/link" > /dev/null
   assert_eq "$(readlink "$HOME/link")" "$HOME/target"
   assert_eq "$(readlink "$HOME/link.bak")" "$HOME/other"
+}
+
+test_setup_runs_from_another_directory() {
+  mkdir "$HOME/elsewhere"
+  cd "$HOME/elsewhere"
+  "$DOTFILES/setup.sh" > /dev/null
+  assert_eq "$(git config --global user.name)" "Wade Beveridge"
+  assert_eq "$(readlink "$HOME/.claude/CLAUDE.md")" "$DOTFILES/aidev/AGENTS.md"
+  assert_eq "$(readlink "$HOME/.claude/skills/wcommit")" "$DOTFILES/aidev/skills/wcommit"
+  assert_contains "$(cat "$HOME/.bashrc")" "set -o vi"
 }
 
 failures=0

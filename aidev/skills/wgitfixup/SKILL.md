@@ -16,8 +16,11 @@ Make the branch read as if the fix had been there all along
 
 ### 1. Rewritable range
 
-Base is the argument, else the remote-tracking ref of the branch the developer named. Local `master` is often stale.
-Candidates are only `$(git merge-base <base> HEAD)..HEAD`.
+Base is the argument, else the remote-tracking ref of the branch the developer named, else the remote-tracking
+integration branch this feature branch was forked from (the one whose merge base with HEAD leaves the branch's own
+commits above it). Never the feature branch's own upstream: once the branch is pushed, that ref sits at HEAD and the
+range collapses to nothing. Local `master` is often stale.
+Candidates are only `$(git merge-base <base> HEAD)..HEAD`. Pushed feature-branch commits are still candidates.
 
 ### 2. The fix
 

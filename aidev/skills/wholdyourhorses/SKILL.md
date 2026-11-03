@@ -1,5 +1,5 @@
 ---
-name: wplan
+name: wholdyourhorses
 ---
 
 ## Purpose

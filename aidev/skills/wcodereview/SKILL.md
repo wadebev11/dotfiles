@@ -16,8 +16,11 @@ The current branch is always the one being reviewed. Pick the first rule that ap
 1. **The user gave instructions**: they override the rules below. A bare branch name is the base branch to diff against.
 2. **Uncommitted changes exist**: review only those. That's `git diff HEAD` plus untracked files from
    `git status --short`. Ignore committed changes.
-3. **Otherwise**: review `$(git merge-base <base> HEAD)..HEAD`, where `<base>` is origin's default branch from
-   `git symbolic-ref refs/remotes/origin/HEAD`. Use the remote-tracking ref, local branches are often stale.
+3. **Otherwise**: review `$(git merge-base <base> HEAD)..HEAD`, where `<base>` is the branch this one was cut from.
+   To find it, check each ref from `git for-each-ref refs/remotes/origin`, skipping the current branch's own upstream
+   and any ref that already contains HEAD. Pick the ref with the fewest commits in `$(git merge-base <ref> HEAD)..HEAD`.
+   If several refs tie, or the result looks wrong, ask the developer. Use remote-tracking refs, local branches are
+   often stale.
 
 If the chosen rule yields nothing to review, say so and stop. Don't give a verdict.
 

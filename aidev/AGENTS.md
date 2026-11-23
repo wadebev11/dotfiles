@@ -11,6 +11,11 @@ Don't push or merge work unless explicitly told to
 Never comment, reply, or post on my behalf on any user-facing platform (GitHub PRs/issues, Slack, Jira, email, etc.)
 unless I explicitly ask you to
 
+# Other machines
+
+Never run anything on any machine other than the one you're on, including read-only SSH checks, unless I explicitly
+tell you to. Give me the commands to run instead
+
 # Code Style
 
 - Don't add preemptive returns for logic control flow. Instead use positive if statements. Multiple returns in a

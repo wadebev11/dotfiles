@@ -25,3 +25,8 @@ unless I explicitly ask you to
 - When reaching for small utility functions, don't create private functions in the file you're working in. Search the
   codebase for other utility functions that already do what you want. This often applies to formatting, date handling,
   getting params from http requests, etc.
+
+# Documentation
+
+ADRs are records of a decision at a point in time. Never edit an accepted ADR to reflect later changes. If a decision
+changes, write a new ADR that supersedes it.
